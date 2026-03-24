@@ -4,14 +4,19 @@ import CodeShare from "./Components/molecule/CodeShare";
 import { v4 as uuidv4 } from "uuid";
 
 const Home = () => {
+
   const navigate = useNavigate();
+
   const [name, setName] = useState(localStorage.getItem("username") || "");
 
+  // Function to handle room creation
   const handleCreateRoom = () => {
+
     if (!name.trim()) return alert("Please enter your name");
     localStorage.setItem("username", name.trim());
     const newRoomId = uuidv4();
     navigate(`/room/${newRoomId}`);
+
   };
 
   return (
@@ -41,12 +46,17 @@ const Home = () => {
   );
 };
 
+// Component to handle the room view and joining logic
 const RoomView = () => {
+
   const { roomId } = useParams();
+
   const [name, setName] = useState(localStorage.getItem("username") || "");
+
   const [hasJoined, setHasJoined] = useState(!!localStorage.getItem("username"));
 
   const handleJoin = () => {
+    
     if (!name.trim()) return alert("Please enter your name");
     localStorage.setItem("username", name.trim());
     setHasJoined(true);

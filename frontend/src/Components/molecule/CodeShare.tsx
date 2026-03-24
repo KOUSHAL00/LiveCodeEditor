@@ -16,19 +16,28 @@ const colors = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#6366f1", "#ec4899"
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
 const CodeShare = ({ roomId, username }: CodeShareProps) => {
+
   const monacoRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+
   const providerRef = useRef<WebsocketProvider | null>(null);
+
   const [activeUsers, setActiveUsers] = useState<any[]>([]);
 
   const [copied, setCopied] = useState(false);
 
+  // Function to copy current page URL to clipboard
   const handleCopyLink = () => {
+
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+
   };
 
+  // Setup function when Monaco editor is mounted
   const handleSetup: OnMount = (editor) => {
+
+    // Store Monaco editor instance in ref for later use
     monacoRef.current = editor;
 
     // 1. initialize shared YJS object
@@ -41,20 +50,24 @@ const CodeShare = ({ roomId, username }: CodeShareProps) => {
       wsUrl,
       roomId,
       sharedObject,
-      { params: { auth: username } }
+      { params: { auth: username } } // Send username as a query param for awareness
     );
+
+    // Store provider in ref for cleanup later
     providerRef.current = provider;
 
     // 3. Connect document to editor
     const monacoBinding = new MonacoBinding(
-      sharedObject.getText("monaco"),
+      sharedObject.getText("monaco"), 
       monacoRef.current.getModel()!,
-      new Set([monacoRef.current]),
+      new Set([monacoRef.current]), 
       provider.awareness
     );
 
     // 4. Setup Awareness (User identity & cursors)
     const userColor = getRandomColor();
+
+    // Set local user state for awareness (name and color)
     provider.awareness.setLocalStateField("user", {
       name: username,
       color: userColor,
@@ -72,7 +85,7 @@ const CodeShare = ({ roomId, username }: CodeShareProps) => {
   // Clean up on unmount
   useEffect(() => {
     return () => {
-      if (providerRef.current) {
+      if (providerRef.current) { 
         providerRef.current.destroy();
       }
     };

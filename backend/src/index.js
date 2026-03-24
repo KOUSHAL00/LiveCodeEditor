@@ -36,6 +36,7 @@ wss.on('connection', (ws, req) => {
         }
 
         console.log(`New client connected: ${authName} to ${requestUrl.pathname}`);
+        
         yws.setupWSConnection(ws, req); // Handle WebSocket connection using y-websocket utility
         
     } catch (error) {
